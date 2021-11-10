@@ -16,6 +16,7 @@ use curve25519_dalek::{constants, edwards, scalar::Scalar};
 use std::convert::{TryInto, TryFrom};
 use byteorder::{BigEndian, ReadBytesExt};
 use std::hash::Hash;
+use std::ptr::hash;
 
 
 fn demo<T, const N: usize>(v: Vec<T>) -> [T; N] {
@@ -60,4 +61,24 @@ fn main() {
 
     let r = ra.next_u32();
     let R = Scalar::from(r) * G;
+
+    let rtkpid = Scalar::from(r) * tk_pid;
+    let mut hasher_1 = Sha3_256::new();
+    hasher_1.update(rtkpid.compress().as_bytes());
+    let hs_rtkpid = hasher_1.finalize();
+
+    let P = String::from_utf8_lossy(&*hs_rtkpid.to_vec()).to_string() + &k_ab;
+    println!("P = {}", P);
+
+    // verification
+    let tkpidR = hash_scalar * R;
+    let mut hasher_2 = Sha3_256::new();
+    hasher_2.update(tkpidR.compress().as_bytes());
+
+    let hs_tkpidR = hasher_2.finalize();
+    let P_prime = String::from_utf8_lossy(&*hs_tkpidR.to_vec()).to_string() + &k_ab;
+    assert_eq!(P , P_prime);
+    println!("verification successfully");
+
+
 }
