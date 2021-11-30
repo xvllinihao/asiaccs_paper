@@ -8,8 +8,12 @@ edition = "2021"
 [dependencies]
 pbkdf2 = "0.9.0"
 rand_core = { version = "0.6", features = ["std"] }
-rand = "0.4"
+rand = "0.5"
 sha3 = "0.9.1"
 curve25519-dalek = "3.2.0"
 byteorder = "1.4.3"
-ecies = "0.2.1"
+ecies = {version = "0.2", default-features = false, features = ["pure"]}
+aes = "0.7.5"
+slice_as_array = "1.1.0"
+hex-literal = "0.3.4"
+block-modes = "0.8.1"
